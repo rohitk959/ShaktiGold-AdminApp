@@ -1,0 +1,27 @@
+<ion-header>
+
+  <ion-navbar color="dark">
+    <ion-title>Item Owner Details</ion-title>
+  </ion-navbar>
+
+</ion-header>
+
+
+<ion-content class="sg-item-owner-details">
+    <ion-card>
+      <ion-card-content>
+        <div class="sg-text">
+        First Name: {{message.firstName}} <br>
+        Last Name: {{message.lastName}} <br>
+        Email ID: {{message.email}} <br>
+        Address Line 1: {{userDetailsModel.addressLine1}} <br>
+        Address Line 2: {{userDetailsModel.addressLine2}} <br>
+        State: {{userDetailsModel.state}} <br>
+        Country: {{userDetailsModel.country}} <br>
+        Mobile Number: {{userDetailsModel.mobileNumber}} <br>
+        Alt Mobile Number: {{userDetailsModel.altMobileNumber}} <br>
+        Landline Number: {{userDetailsModel.landLineNumber}} <br>
+        </div>
+      </ion-card-content>
+    </ion-card>
+</ion-content>

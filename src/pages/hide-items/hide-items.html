@@ -1,0 +1,35 @@
+<ion-header>
+
+  <ion-navbar color="dark">
+    <ion-title>Hide Item</ion-title>
+  </ion-navbar>
+</ion-header>
+
+<ion-content>
+  <ion-list>
+    <ion-item>
+      <ion-label>Category</ion-label>
+      <ion-select [(ngModel)]="selectedSubcategory" multiple="false">
+        <ion-option *ngFor="let subcategory of subcategories" value="{{subcategory.subcategoryName}}">{{subcategory.subcategoryName}}</ion-option>
+      </ion-select>
+    </ion-item>
+  </ion-list>
+
+  <ion-row>
+    <ion-col>
+      <button ion-button color="dark" block (click)="getItems()" [disabled]='selectedSubcategory == ""'>Display Items</button>
+    </ion-col>
+  </ion-row>
+  <hr>
+  <br>
+  <ion-list *ngIf="items">
+    <ion-item *ngFor="let item of items">
+      <ion-thumbnail item-left (click)="getItemDetails(item.itemId)">
+        <img [src]="item.imgUrl"/>
+      </ion-thumbnail>
+      <b (click)="getItemDetails(item.itemId)">Item Code - {{item.itemId}}</b>
+      <ion-icon (click)="hideItem(item.itemId, true)" name="eye" item-right *ngIf="item.recordActive"></ion-icon>
+      <ion-icon (click)="hideItem(item.itemId, false)" name="eye-off" item-right *ngIf="!item.recordActive"></ion-icon>
+    </ion-item>
+  </ion-list>
+</ion-content>

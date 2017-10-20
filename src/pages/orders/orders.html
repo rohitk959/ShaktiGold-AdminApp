@@ -1,0 +1,38 @@
+<ion-header>
+
+  <ion-navbar color="dark">
+    <ion-title>Orders</ion-title>
+
+    <ion-buttons end>
+
+      <button ion-button (click)="updateItemList()"><ion-icon name="refresh"></ion-icon>&nbsp;Refresh List</button>
+    </ion-buttons>
+  </ion-navbar>
+
+</ion-header>
+
+
+<ion-content class="sg-orders">
+  <ion-list [hidden]="!showOrders">
+    <ion-item *ngFor="let order of message">
+        <ion-thumbnail item-left (click)="getItemDetails(order.itemId)">
+          <img [src]="order.imgUrl"/>
+        </ion-thumbnail>
+        <div class="sg-orders-text" (click)="getItemOwnerDetails(order.invoiceNumber)">
+          <b>Item Code -</b> {{order.itemId}}<br>
+          <b>Invoice Number -</b> {{order.invoiceNumber}}<br>
+          <b>Order Date -</b> {{order.orderDate}}<br>
+          <b>Order Complete Date -</b> {{order.orderCompleteDate}}<br>
+          <b>Order Status -</b>
+          <span *ngIf="order.orderStatus == 'NEW'" class="sg-orders-text-green">{{order.orderStatus}}</span>
+          <span *ngIf="order.orderStatus == 'PROCESSING'" class="sg-orders-text-orange">{{order.orderStatus}}</span>
+          <span *ngIf="order.orderStatus == 'DELIVERED'" class="sg-orders-text-blue">{{order.orderStatus}}</span>
+          <span *ngIf="order.orderStatus == 'CANCELLED'" class="sg-orders-text-red">{{order.orderStatus}}</span>
+        </div>
+
+          <button ion-button clear item-right (click)="updateOrder(order.invoiceNumber)" item-right>Update</button>
+      </ion-item>
+  </ion-list>
+
+  <h2 [hidden]="showOrders">There are no order to be displayed</h2>
+</ion-content>
