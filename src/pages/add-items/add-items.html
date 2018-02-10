@@ -12,7 +12,7 @@
     <ion-item>
       <ion-label>Subcategory</ion-label>
       <ion-select [(ngModel)]="selectedSubcategory" multiple="false">
-        <ion-option *ngFor="let subcategory of subcategories" value="{{subcategory.subcategoryName}}">{{subcategory.subcategoryName}}</ion-option>
+        <ion-option *ngFor="let subcategory of subcategories?.message" value="{{subcategory.subcategoryName}}">{{subcategory.subcategoryName}}</ion-option>
       </ion-select>
     </ion-item>
   </ion-list>
@@ -20,17 +20,7 @@
   <button ion-button color="dark" block (click)="getItemTemplate()" [disabled]='selectedSubcategory == ""'>Display Template</button>
   <br>
   <div *ngIf="showTemplate">
-    <ion-list>
-      <ion-item>
-        <ion-label>File Type</ion-label>
-        <ion-select [(ngModel)]="fileType" multiple="false">
-            <ion-option value="jpg">JPG / JPEG</ion-option>
-            <ion-option value="png">PNG</ion-option>
-            <ion-option value="gif">GIF</ion-option>
-        </ion-select>
-      </ion-item>
-    </ion-list>
-    <button ion-button color="dark" block (click)="presentActionSheet()" [disabled]='fileType == ""'>Select Image</button>
+    <button ion-button color="dark" block (click)="presentActionSheet()">Select Image</button>
     <h2 class="sg-text-color" *ngIf="base64Image">Image:</h2>
     <img [src]="base64Image" *ngIf="base64Image" />
 

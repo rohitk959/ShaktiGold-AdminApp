@@ -1,52 +1,62 @@
 import { Component } from '@angular/core';
-import { NavController, NavParams, LoadingController, AlertController } from 'ionic-angular';
+import { NavParams } from 'ionic-angular';
 import { OrdersService } from '../../providers/orders-service';
-import * as globals from '../../app/globals';
+import { NotificationsService } from '../../providers/notifications-service';
+import { GlobalFunctions } from '../../providers/global-functions';
 
 @Component({
   selector: 'page-item-details',
   templateUrl: 'item-details.html'
 })
 export class ItemDetailsPage {
-
   itemId: string;
+  approxAmount: number;
+  notificationId: number;
+  notificationFlag: boolean;
   public itemDetailsData: any = [];
-  public message: any = [];
   public itemProperties: any = [];
 
-  constructor(private navCtrl: NavController, 
-      private navParams: NavParams,
-      private loadingCtrl: LoadingController,
-      private alertCtrl: AlertController,
-      private orderSrvc: OrdersService) {}
+  constructor(
+    private navParams: NavParams,
+    private gfunc: GlobalFunctions,
+    private orderSrvc: OrdersService,
+    private notificationSrvc: NotificationsService
+  ) {}
 
   ionViewDidLoad() {
-    this.itemId = this.navParams.get('itemId');
-  }
-
-  ionViewDidEnter() {
-    this.loadItemDetails();
+    this.itemId = this.navParams.get("itemId");
+    this.notificationFlag = this.navParams.get("notificationFlag");
+    if(this.notificationFlag) {
+      this.notificationId = this.navParams.get("notificationId");
+      this.itemDetailsData = this.navParams.get("item");
+      this.itemProperties = this.itemDetailsData.itemProperty;
+      this.approxAmount = this.navParams.get("approxAmount");
+    } else {
+      this.loadItemDetails();
+    }
   }
 
   loadItemDetails() {
-    let loader = this.loadingCtrl.create({
-      content: "Loading..."
-    });
-    loader.present();
-    this.orderSrvc.loadItemDetails(this.itemId).then( data => {
-      this.itemDetailsData = data;
-      this.message = this.itemDetailsData.message;
-      this.itemProperties = this.itemDetailsData.message.itemProperty;
-      loader.dismiss();
-    }).catch( err => {
-        loader.dismiss();
-        let alert = this.alertCtrl.create({
-            title: globals.MAINTAINANCE_TITLE,
-            subTitle: globals.MAINTAINANCE_MSG,
-            buttons: ['OK']
-          });
-        alert.present();
-      });
+    this.gfunc.showLoader();
+    this.orderSrvc.loadItemDetails(this.itemId).subscribe(
+      response => {
+        this.itemDetailsData = response.message;
+        this.itemProperties = this.itemDetailsData.itemProperty;
+        this.gfunc.dismissLoader();
+      },
+      err => {
+        this.gfunc.hadleApiError(err);
+      }
+    );
   }
 
+  submitApproxAmount() {
+    this.gfunc.showLoader();
+    this.notificationSrvc.submitApproxAmount(this.notificationId, this.approxAmount).subscribe( (response) => {
+      this.gfunc.dismissLoader();
+      this.gfunc.displayOkAlert(response.message);
+    }, err => {
+      this.gfunc.hadleApiError(err);
+    } );
+  }
 }

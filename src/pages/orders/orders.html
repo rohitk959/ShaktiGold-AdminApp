@@ -14,7 +14,7 @@
 
 <ion-content class="sg-orders">
   <ion-list [hidden]="!showOrders">
-    <ion-item *ngFor="let order of message">
+    <ion-item *ngFor="let order of ordersData?.message">
         <ion-thumbnail item-left (click)="getItemDetails(order.itemId)">
           <img [src]="order.imgUrl"/>
         </ion-thumbnail>

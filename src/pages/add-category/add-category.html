@@ -1,11 +1,8 @@
 <ion-header>
-
   <ion-navbar color="dark">
     <ion-title>Add Category</ion-title>
   </ion-navbar>
-
 </ion-header>
-
 
 <ion-content padding class="sg-add-category">
   <form [formGroup]="addCategoryForm">
@@ -34,16 +31,16 @@
           UNIT
         </ion-col>
       </ion-row>
-      </ion-list-header>
+    </ion-list-header>
     <ion-item *ngFor="let property of properties; let i = index">
       <ion-row>
-      <ion-col class="sg-list-text">
-        {{property.name}}
-      </ion-col>
-      <ion-col class="sg-list-text">
-        {{property.unit}}
-      </ion-col>
-      <ion-icon (click)="deleteItem(i)" name="remove-circle"></ion-icon>
+        <ion-col class="sg-list-text">
+          {{property.name}}
+        </ion-col>
+        <ion-col class="sg-list-text">
+          {{property.unit}}
+        </ion-col>
+        <ion-icon (click)="deleteItem(i)" name="remove-circle"></ion-icon>
       </ion-row>
     </ion-item>
   </ion-list>
@@ -67,24 +64,15 @@
 
   <br>
   <br>
-  <ion-list>
-      <ion-item>
-        <ion-label>File Type</ion-label>
-        <ion-select [(ngModel)]="fileType" multiple="false">
-            <ion-option value="jpg">JPG / JPEG</ion-option>
-            <ion-option value="png">PNG</ion-option>
-            <ion-option value="gif">GIF</ion-option>
-        </ion-select>
-      </ion-item>
-    </ion-list>
-    <button ion-button color="dark" block (click)="presentActionSheet()" [disabled]='fileType == ""'>Select Image</button>
-    <h2 class="sg-text-color" *ngIf="base64Image">Image:</h2>
-    <img [src]="base64Image" *ngIf="base64Image" />
-    <br>
+  <button ion-button color="dark" block (click)="presentActionSheet()">Select Image</button>
+  <h2 class="sg-text-color" *ngIf="base64Image">Image:</h2>
+  <img [src]="base64Image" *ngIf="base64Image" />
+  <br>
 
   <ion-row>
     <ion-col>
-      <button ion-button [disabled]='((!addCategoryForm.valid) || !(properties?.length > 0) || !(base64Image))' (click)="addCategory()" color="dark" block>Add Category</button>
+      <button ion-button [disabled]='((!addCategoryForm.valid) || !(properties?.length > 0) || !(base64Image))' (click)="addCategory()"
+        color="dark" block>Add Category</button>
     </ion-col>
   </ion-row>
 </ion-content>

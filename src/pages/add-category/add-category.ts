@@ -1,22 +1,26 @@
-import { Component } from '@angular/core';
-import { NavController, NavParams, AlertController, LoadingController, ActionSheetController } from 'ionic-angular';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { AddStuffService } from '../../providers/add-stuff-service';
-import { Camera, CameraOptions } from '@ionic-native/camera';
+import { Component } from "@angular/core";
+import {
+  NavController,
+  AlertController,
+  LoadingController,
+  ActionSheetController
+} from "ionic-angular";
+import { FormBuilder, FormGroup, Validators } from "@angular/forms";
+import { Camera, CameraOptions } from "@ionic-native/camera";
+import { AddStuffService } from "../../providers/add-stuff-service";
+import { GlobalFunctions } from "../../providers/global-functions";
 
 @Component({
-  selector: 'page-add-category',
-  templateUrl: 'add-category.html'
+  selector: "page-add-category",
+  templateUrl: "add-category.html"
 })
 export class AddCategoryPage {
-
   categoryForm = {
-    category: '',
-    description: ''
+    category: "",
+    description: ""
   };
-  
+
   private base64Image: string;
-  private fileType: string = "";
   addCategoryForm: FormGroup;
   propertyName: string = "";
   propertyUnit: string = "";
@@ -24,21 +28,27 @@ export class AddCategoryPage {
   properties: ItemProperty[] = [];
   categoryData: any;
 
-  constructor(private navCtrl: NavController, 
-      private navParams: NavParams,
-      private formBuilder: FormBuilder,
-      private addStuffSrvc: AddStuffService,
-      private alertCtrl: AlertController,
-      private loadingCtrl: LoadingController,
-      private actionSheetCtrl: ActionSheetController,
-      private camera: Camera) {
-        this.addCategoryForm = this.formBuilder.group({
-          category: ['', Validators.compose([ Validators.pattern('[A-Za-z0-9- ]+'), Validators.required])],
-          description: ['']
-        });
-      }
-
-  ionViewDidLoad() { }
+  constructor(
+    private navCtrl: NavController,
+    private formBuilder: FormBuilder,
+    private addStuffSrvc: AddStuffService,
+    private gfunc: GlobalFunctions,
+    private alertCtrl: AlertController,
+    private loadingCtrl: LoadingController,
+    private actionSheetCtrl: ActionSheetController,
+    private camera: Camera
+  ) {
+    this.addCategoryForm = this.formBuilder.group({
+      category: [
+        "",
+        Validators.compose([
+          Validators.pattern("[A-Za-z0-9- ]+"),
+          Validators.required
+        ])
+      ],
+      description: [""]
+    });
+  }
 
   showProp() {
     this.showPropInput = true;
@@ -55,7 +65,7 @@ export class AddCategoryPage {
     this.showPropInput = false;
   }
 
-  deleteItem(index){
+  deleteItem(index) {
     this.properties.splice(index, 1);
   }
 
@@ -64,96 +74,101 @@ export class AddCategoryPage {
       content: "Loading..."
     });
     loader.present();
-    this.addStuffSrvc.registerSubCategory(this.categoryForm.category, 
-        this.categoryForm.description, 
-        this.base64Image, 
-        this.properties).then( successData => {
+    this.addStuffSrvc
+      .registerSubCategory(
+        this.categoryForm.category,
+        this.categoryForm.description,
+        this.base64Image,
+        this.properties
+      )
+      .subscribe(
+        response => {
           let alert = this.alertCtrl.create({
-            title: 'Category Added Successfully',
-            buttons:[{
-              text: 'OK',
-              handler: data => {
-                this.navCtrl.pop();
+            title: response.message,
+            buttons: [
+              {
+                text: "OK",
+                handler: data => {
+                  this.navCtrl.pop();
+                }
               }
-            }]
+            ]
           });
           loader.dismiss();
           alert.present();
-        }, failureData => {
-          let alert = this.alertCtrl.create({
-            title: 'Failed to add category',
-            buttons:[{
-              text: 'OK',
-              handler: data => {
-                this.navCtrl.pop();
-              }
-            }]
-          });
+        },
+        err => {
           loader.dismiss();
-          alert.present();
-        });
+          this.gfunc.hadleApiError(err);
+        }
+      );
   }
 
   public presentActionSheet() {
     let actionSheet = this.actionSheetCtrl.create({
-      title: 'Image Source',
+      title: "Image Source",
       buttons: [
         {
-          text: 'Gallery',
+          text: "Gallery",
           handler: () => {
-            this.takePicture(this.camera.PictureSourceType.PHOTOLIBRARY, this.fileType);
+            this.takePicture(this.camera.PictureSourceType.PHOTOLIBRARY);
           }
         },
         {
-          text: 'Camera',
+          text: "Camera",
           handler: () => {
-            this.takePicture(this.camera.PictureSourceType.CAMERA, this.fileType);
+            this.takePicture(this.camera.PictureSourceType.CAMERA);
           }
         },
         {
-          text: 'Cancel',
-          role: 'cancel'
+          text: "Cancel",
+          role: "cancel"
         }
       ]
     });
     actionSheet.present();
   }
 
-  public takePicture(sourceType, fileType) {
-
-    let loader = this.loadingCtrl.create({
-      content: "Loading..."
-    });
-    loader.present();
+  public takePicture(sourceType) {
     // Create options for the Camera Dialog
     var options: CameraOptions = {
       quality: 100,
       sourceType: sourceType,
       saveToPhotoAlbum: true,
       correctOrientation: true,
+      allowEdit: true,
       destinationType: this.camera.DestinationType.DATA_URL,
+      encodingType: this.camera.EncodingType.JPEG,
       mediaType: this.camera.MediaType.PICTURE
     };
-  
+
+    /* let loader = this.loadingCtrl.create({
+      content: "Loading..."
+    });
+    loader.present();*/
+
     // Get the data of an image
-    this.camera.getPicture(options).then((imageData) => {
+    this.camera.getPicture(options).then(
+      imageData => {
         // imageData is a base64 encoded string
-          this.base64Image = "data:image/" + fileType + ";base64," + imageData;
-          loader.dismiss();
-      }, (err) => {
-          console.log(err);
-          loader.dismiss();
-      });
+        this.base64Image = 'data:image/jpeg;base64,' + imageData;
+        // loader.dismiss();
+      },
+      err => {
+        console.log(err);
+        // loader.dismiss();
+      }
+    );
   }
 }
 
 export class ItemProperty {
   name: string;
   type: string;
-  unit :string;
+  unit: string;
   constructor(_propName: string, _propUnit: string) {
     this.name = _propName;
-    this.type = 'string';
+    this.type = "string";
     this.unit = _propUnit;
   }
 }

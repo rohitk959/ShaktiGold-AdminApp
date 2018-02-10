@@ -1,0 +1,19 @@
+<ion-header>
+    <ion-navbar color="dark">
+        <ion-title>Notifications - <ion-badge color="danger">{{notificationCount}}</ion-badge></ion-title>
+    </ion-navbar>
+</ion-header>
+
+<ion-content class="sg-notifications">
+    <ion-list>
+        <ion-item *ngFor="let notification of notificationsData?.message" (click)="getItemDetails(notification.item, notification.id, notification.approxAmount)" 
+                [ngClass]="{'notificationRead':notification.adminRead, 'notificationUnread':!notification.adminRead}">
+            <ion-thumbnail item-left>
+                <img [src]="notification.item.imgUrl" />
+            </ion-thumbnail>
+            <b>Item Code - {{notification.item.itemId}}</b>
+            <br>
+            <b>Item Name - {{notification.item.itemName}}</b>
+        </ion-item>
+    </ion-list>
+</ion-content>

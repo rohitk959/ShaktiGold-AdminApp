@@ -1,86 +1,94 @@
-import { Component } from '@angular/core';
-import { NavController, NavParams, AlertController, LoadingController } from 'ionic-angular';
-import { OrdersService } from '../../providers/orders-service';
-import { ItemOwnerDetailsPage } from '../item-owner-details/item-owner-details';
-import { ItemDetailsPage } from '../item-details/item-details';
+import { Component } from "@angular/core";
+import {
+  NavController,
+  AlertController,
+  LoadingController
+} from "ionic-angular";
+import { OrdersService } from "../../providers/orders-service";
+import { ItemOwnerDetailsPage } from "../item-owner-details/item-owner-details";
+import { ItemDetailsPage } from "../item-details/item-details";
+import { GlobalFunctions } from "../../providers/global-functions";
 
 @Component({
-  selector: 'page-orders',
-  templateUrl: 'orders.html'
+  selector: "page-orders",
+  templateUrl: "orders.html"
 })
 export class OrdersPage {
-
   ordersData: any;
-  message: any = [];
   showOrders: boolean = true;
 
-  constructor(private navCtrl: NavController, 
-      private navParams: NavParams,
-      private ordersSrvc: OrdersService,
-      private alertCtrl: AlertController,
-      private loadingCtrl: LoadingController) {}
+  constructor(
+    private navCtrl: NavController,
+    private ordersSrvc: OrdersService,
+    private gfunc: GlobalFunctions,
+    private alertCtrl: AlertController,
+    private loadingCtrl: LoadingController
+  ) {}
 
-  ionViewDidLoad() { }
+  ionViewDidLoad() {}
 
   ionViewDidEnter() {
     this.loadOrders();
   }
 
   loadOrders() {
-    if(this.ordersData == null) {
+    if (this.ordersData == null) {
       let loader = this.loadingCtrl.create({
-        content: 'Loading...'
+        content: "Loading..."
       });
       loader.present();
-      this.ordersSrvc.loadOrders().then( successData => {
-        this.ordersData = successData;
-        this.showOrders = true;
-        this.message = this.ordersData.message;
-        loader.dismiss();
-      }, failureData => {
-        this.ordersData = null;
-        this.showOrders = false;
-        loader.dismiss();
-      });
+      this.ordersSrvc.loadOrders().subscribe(
+        response => {
+          this.ordersData = response;
+          this.showOrders = true;
+          loader.dismiss();
+        },
+        err => {
+          loader.dismiss();
+          this.gfunc.hadleApiError(err);
+        }
+      );
     }
   }
 
   updateOrder(invoiceNumber) {
     let alert = this.alertCtrl.create({
-      title: 'Update Order',
+      title: "Update Order",
       inputs: [
         {
-          type: 'radio',
-          label: 'NEW',
-          value: 'NEW'
+          type: "radio",
+          label: "NEW",
+          value: "NEW"
         },
         {
-          type: 'radio',
-          label: 'PROCESSING',
-          value: 'PROCESSING'
+          type: "radio",
+          label: "PROCESSING",
+          value: "PROCESSING"
         },
         {
-          type: 'radio',
-          label: 'DELIVERED',
-          value: 'DELIVERED'
+          type: "radio",
+          label: "DELIVERED",
+          value: "DELIVERED"
         },
         {
-          type: 'radio',
-          label: 'CANCELLED',
-          value: 'CANCELLED'
+          type: "radio",
+          label: "CANCELLED",
+          value: "CANCELLED"
         }
       ],
       buttons: [
         {
-          text: 'Update',
+          text: "Update",
           handler: data => {
-            this.ordersSrvc.updateOrder(invoiceNumber, data).then( successData => {
-              this.ordersData = null;
-              this.message = [];
-              this.loadOrders();
-            }, failureData => {
-              console.log("Failed to update order");
-            });
+            this.ordersSrvc.updateOrder(invoiceNumber, data).subscribe(
+              response => {
+                this.ordersData = null;
+                this.loadOrders();
+              },
+              err => {
+                this.gfunc.hadleApiError(err);
+              }
+            );
           }
         }
       ]
@@ -90,20 +98,19 @@ export class OrdersPage {
 
   getItemDetails(itemId) {
     this.navCtrl.push(ItemDetailsPage, {
-      'itemId': itemId
+      itemId: itemId,
+      notificationFlag: false
     });
   }
 
   getItemOwnerDetails(invoiceNumber) {
     this.navCtrl.push(ItemOwnerDetailsPage, {
-      'invoiceNumber': invoiceNumber
+      invoiceNumber: invoiceNumber
     });
   }
 
   updateItemList() {
     this.ordersData = null;
-    this.message = [];
     this.loadOrders();
   }
-
 }

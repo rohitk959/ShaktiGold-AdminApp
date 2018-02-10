@@ -1,56 +1,54 @@
-import { Component } from '@angular/core';
-import { NavController, NavParams, ActionSheetController } from 'ionic-angular';
-import { AddCategoryPage } from '../add-category/add-category';
-import { AddItemsPage } from '../add-items/add-items';
-import { HideCategoryPage } from '../hide-category/hide-category';
-import { HideItemsPage } from '../hide-items/hide-items';
-import { DeleteCategoryPage } from '../delete-category/delete-category';
-import { DeleteItemsPage } from '../delete-items/delete-items';
- 
+import { Component } from "@angular/core";
+import { NavController, ActionSheetController } from "ionic-angular";
+import { AddCategoryPage } from "../add-category/add-category";
+import { AddItemsPage } from "../add-items/add-items";
+import { HideCategoryPage } from "../hide-category/hide-category";
+import { HideItemsPage } from "../hide-items/hide-items";
+import { DeleteCategoryPage } from "../delete-category/delete-category";
+import { DeleteItemsPage } from "../delete-items/delete-items";
+
 @Component({
-  selector: 'page-add-stuff',
-  templateUrl: 'add-stuff.html'
+  selector: "page-add-stuff",
+  templateUrl: "add-stuff.html"
 })
 export class AddStuffPage {
+  constructor(
+    private navCtrl: NavController,
+    private actionSheetCtrl: ActionSheetController
+  ) {}
 
-  constructor(private navCtrl: NavController, 
-      private navParams: NavParams,
-      private actionSheetCtrl: ActionSheetController) {}
-
-  ionViewDidLoad() { }
+  ionViewDidLoad() {}
 
   displayActionsCategory() {
     let actionSheet = this.actionSheetCtrl.create({
-      title: 'Category Actions',
+      title: "Category Actions",
       buttons: [
         {
-          text: 'Add Category',
+          text: "Add Category",
           handler: () => {
             this.navCtrl.push(AddCategoryPage);
           }
         },
         {
-          text: 'Modify Category',
-          handler: () => {
-            
-          }
+          text: "Modify Category",
+          handler: () => {}
         },
         {
-          text: 'Hide Category',
+          text: "Hide Category",
           handler: () => {
             this.navCtrl.push(HideCategoryPage);
           }
         },
         {
-          text: 'Delete Category',
-          role: 'destructive',
+          text: "Delete Category",
+          role: "destructive",
           handler: () => {
             this.navCtrl.push(DeleteCategoryPage);
           }
         },
         {
-          text: 'Cancel',
-          role: 'cancel'
+          text: "Cancel",
+          role: "cancel"
         }
       ]
     });
@@ -59,36 +57,34 @@ export class AddStuffPage {
 
   displayActionsItem() {
     let actionSheet = this.actionSheetCtrl.create({
-      title: 'Item Actions',
+      title: "Item Actions",
       buttons: [
         {
-          text: 'Add Item',
+          text: "Add Item",
           handler: () => {
             this.navCtrl.push(AddItemsPage);
           }
         },
         {
-          text: 'Modify Item',
-          handler: () => {
-            
-          }
+          text: "Modify Item",
+          handler: () => {}
         },
         {
-          text: 'Hide Item',
+          text: "Hide Item",
           handler: () => {
             this.navCtrl.push(HideItemsPage);
           }
         },
         {
-          text: 'Delete Item',
-          role: 'destructive',
+          text: "Delete Item",
+          role: "destructive",
           handler: () => {
             this.navCtrl.push(DeleteItemsPage);
           }
         },
         {
-          text: 'Cancel',
-          role: 'cancel'
+          text: "Cancel",
+          role: "cancel"
         }
       ]
     });

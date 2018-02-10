@@ -10,16 +10,26 @@
 <ion-content class="sg-item-detail">
   <ion-card>
     <ion-card-header>
-      <b> Item Code : {{message.itemId}} </b>
+      <b> Item Code : {{itemDetailsData.itemId}} </b>
     </ion-card-header>
-    <ion-card-content *ngIf="message.imgUrl != null">
-      <img [src]="message.imgUrl"class="sg-item-detail-img"/>
+    <ion-card-content *ngIf="itemDetailsData.imgUrl != null">
+      <img [src]="itemDetailsData.imgUrl" class="sg-item-detail-img" />
     </ion-card-content>
   </ion-card>
 
   <ion-card>
     <ion-card-content *ngFor="let prop of itemProperties">
-        <b>{{prop.name}}</b> : {{prop.value}} {{prop.unit}}
+      <b>{{prop.name}}</b> : {{prop.value}} {{prop.unit}}
+    </ion-card-content>
+  </ion-card>
+
+  <ion-card *ngIf="notificationFlag">
+    <ion-card-content>
+      <ion-item>
+        <ion-label color="dark" floating>Approx Amount</ion-label>
+        <ion-input type="number" [(ngModel)]="approxAmount"></ion-input>
+      </ion-item>
+      <button ion-button color="dark" block (click)="submitApproxAmount()" [disabled]="!approxAmount">Submit</button>
     </ion-card-content>
   </ion-card>
 </ion-content>

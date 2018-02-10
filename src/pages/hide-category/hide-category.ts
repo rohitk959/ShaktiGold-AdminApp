@@ -1,23 +1,21 @@
-import { Component } from '@angular/core';
-import { NavController, NavParams, AlertController, LoadingController, Platform } from 'ionic-angular';
-import { AddStuffService } from '../../providers/add-stuff-service';
+import { Component } from "@angular/core";
+import { LoadingController } from "ionic-angular";
+import { AddStuffService } from "../../providers/add-stuff-service";
+import { GlobalFunctions } from "../../providers/global-functions";
 
 @Component({
-  selector: 'page-hide-category',
-  templateUrl: 'hide-category.html'
+  selector: "page-hide-category",
+  templateUrl: "hide-category.html"
 })
-
 export class HideCategoryPage {
-
   private subcategories: any = [];
   private disableSubcategory: any;
 
-  constructor(private navCtrl: NavController, 
-      private navParams: NavParams,
-      private addStuffSrvc: AddStuffService,
-      private alertCtrl: AlertController,
-      private loadingCtrl: LoadingController,
-      private platform: Platform) {}
+  constructor(
+    private addStuffSrvc: AddStuffService,
+    private gfunc: GlobalFunctions,
+    private loadingCtrl: LoadingController
+  ) {}
 
   ionViewDidEnter() {
     let loader = this.loadingCtrl.create({
@@ -25,23 +23,16 @@ export class HideCategoryPage {
     });
     loader.present();
 
-    this.addStuffSrvc.loadSubcategoryAdmin().then( successData => {
-      this.subcategories = successData;
-      this.subcategories = this.subcategories.message;
-      loader.dismiss();
-    }, failureData => {
-      let alert = this.alertCtrl.create({
-        title:'Failed to get subcategories.',
-        buttons: [{
-          text: 'OK',
-          handler: data => {
-            this.navCtrl.pop();
-          }
-        }]
-      });
-      loader.dismiss();
-      alert.present();
-    });
+    this.addStuffSrvc.loadSubcategoryAdmin().subscribe(
+      response => {
+        this.subcategories = response;
+        loader.dismiss();
+      },
+      err => {
+        loader.dismiss();
+        this.gfunc.hadleApiError(err);
+      }
+    );
   }
 
   showSubcategory(subcategory) {
@@ -50,19 +41,18 @@ export class HideCategoryPage {
     });
     loader.present();
 
-    this.addStuffSrvc.enableDisableSubcategory(subcategory, false).then( successData => {
-      this.disableSubcategory = successData;
-      this.subcategories = [];
-      this.ionViewDidEnter();
-      loader.dismiss();
-    }, failureData => {
-      let alert = this.alertCtrl.create({
-        title:'Failed to show subcategory.',
-        buttons: ['OK']
-      });
-      loader.dismiss();
-      alert.present();
-    });
+    this.addStuffSrvc.enableDisableSubcategory(subcategory, false).subscribe(
+      response => {
+        this.disableSubcategory = response;
+        this.subcategories = [];
+        this.ionViewDidEnter();
+        loader.dismiss();
+      },
+      err => {
+        loader.dismiss();
+        this.gfunc.hadleApiError(err);
+      }
+    );
   }
 
   hideSubcategory(subcategory) {
@@ -71,19 +61,17 @@ export class HideCategoryPage {
     });
     loader.present();
 
-    this.addStuffSrvc.enableDisableSubcategory(subcategory, true).then( successData => {
-      this.disableSubcategory = successData;
-      this.subcategories = [];
-      this.ionViewDidEnter();
-      loader.dismiss();
-    }, failureData => {
-      let alert = this.alertCtrl.create({
-        title:'Failed to hide subcategory.',
-        buttons: ['OK']
-      });
-      loader.dismiss();
-      alert.present();
-    });
+    this.addStuffSrvc.enableDisableSubcategory(subcategory, true).subscribe(
+      response => {
+        this.disableSubcategory = response;
+        this.subcategories = [];
+        this.ionViewDidEnter();
+        loader.dismiss();
+      },
+      err => {
+        loader.dismiss();
+        this.gfunc.hadleApiError(err);
+      }
+    );
   }
-
 }

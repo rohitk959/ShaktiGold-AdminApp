@@ -1,6 +1,14 @@
 {
   "name": "ShaktiGold-Admin",
   "app_id": "f7f239f1",
-  "v2": true,
-  "typescript": true
+  "type": "ionic-angular",
+  "integrations": {
+    "cordova": {}
+  },
+  "proxies": [
+    {
+      "path":"/ShaktiGold",
+      "proxyUrl": "http://localhost:8080/ShaktiGold"
+    }
+  ]
 }

@@ -1,24 +1,25 @@
-import { Component } from '@angular/core';
-import { NavController, NavParams, LoadingController, AlertController } from 'ionic-angular';
-import { AddStuffService } from '../../providers/add-stuff-service';
-import { ItemDetailsPage } from '../item-details/item-details'
+import { Component } from "@angular/core";
+import { NavController, LoadingController } from "ionic-angular";
+import { AddStuffService } from "../../providers/add-stuff-service";
+import { ItemDetailsPage } from "../item-details/item-details";
+import { GlobalFunctions } from "../../providers/global-functions";
 
 @Component({
-  selector: 'page-hide-items',
-  templateUrl: 'hide-items.html'
+  selector: "page-hide-items",
+  templateUrl: "hide-items.html"
 })
 export class HideItemsPage {
-
   private subcategories: any = [];
   selectedSubcategory: string = "";
   private items: any;
   private disableItems: any;
 
-  constructor(private navCtrl: NavController, 
-      private navParams: NavParams,
-      private addStuffSrvc: AddStuffService,
-      private loadingCtrl: LoadingController,
-      private alertCtrl: AlertController) {}
+  constructor(
+    private navCtrl: NavController,
+    private gfunc: GlobalFunctions,
+    private addStuffSrvc: AddStuffService,
+    private loadingCtrl: LoadingController
+  ) {}
 
   ionViewDidEnter() {
     let loader = this.loadingCtrl.create({
@@ -26,64 +27,53 @@ export class HideItemsPage {
     });
     loader.present();
 
-    this.addStuffSrvc.loadSubcategory().then( successData => {
-      this.subcategories = successData;
-      this.subcategories = this.subcategories.message;
-      loader.dismiss();
-    }, failureData => {
-      let alert = this.alertCtrl.create({
-        title:'Failed to get subcategories.',
-        buttons: [{
-          text: 'OK',
-          handler: data => {
-            this.navCtrl.pop();
-          }
-        }]
-      });
-      loader.dismiss();
-      alert.present();
-    });
+    this.addStuffSrvc.loadSubcategory().subscribe(
+      response => {
+        this.subcategories = response;
+        loader.dismiss();
+      },
+      err => {
+        loader.dismiss();
+        this.gfunc.hadleApiError(err);
+      }
+    );
   }
 
   getItems() {
-    this.addStuffSrvc.getAllItemsAdmin(this.selectedSubcategory).then( (successData) => {
-      this.items = successData;
-      this.items = this.items.message;
-    }, (failureData) => {
-      this.items = [];
-      let alert = this.alertCtrl.create({
-        title:'There are no Items for selected Categories.',
-        buttons: ['OK']
-      });
-      alert.present();
-    } );
+    this.addStuffSrvc.getAllItemsAdmin(this.selectedSubcategory).subscribe(
+      response => {
+        this.items = response;
+      },
+      err => {
+        this.gfunc.hadleApiError(err);
+      }
+    );
   }
 
-  hideItem(itemId, hidden) {
+  hideItem(itemId, enabled) {
     let loader = this.loadingCtrl.create({
       content: "Loading..."
     });
     loader.present();
 
-    this.addStuffSrvc.enableDisableItem(itemId, hidden).then( successData => {
-      this.disableItems = successData;
-      this.items = [];
-      loader.dismiss();
-      this.getItems();
-    }, failureData => {
-      this.disableItems = failureData;
-      let alert = this.alertCtrl.create({
-        title:this.disableItems.message,
-        buttons: ['OK']
-      });
-      loader.dismiss();
-      alert.present();
-    });
+    this.addStuffSrvc.enableDisableItem(itemId, enabled).subscribe(
+      successData => {
+        this.disableItems = successData;
+        this.items = [];
+        loader.dismiss();
+        this.getItems();
+      },
+      err => {
+        loader.dismiss();
+        this.gfunc.hadleApiError(err);
+      }
+    );
   }
 
   getItemDetails(itemId) {
     this.navCtrl.push(ItemDetailsPage, {
-      'itemId': itemId
+      itemId: itemId,
+      notificationFlag: false
     });
   }
 }

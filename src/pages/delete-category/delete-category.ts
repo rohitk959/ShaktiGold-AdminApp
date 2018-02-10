@@ -1,21 +1,21 @@
-import { Component } from '@angular/core';
-import { NavController, NavParams, AlertController, LoadingController, Platform } from 'ionic-angular';
-import { AddStuffService } from '../../providers/add-stuff-service';
+import { Component } from "@angular/core";
+import { AlertController, LoadingController } from "ionic-angular";
+import { AddStuffService } from "../../providers/add-stuff-service";
+import { GlobalFunctions } from "../../providers/global-functions";
 
 @Component({
-  selector: 'page-delete-category',
-  templateUrl: 'delete-category.html'
+  selector: "page-delete-category",
+  templateUrl: "delete-category.html"
 })
 export class DeleteCategoryPage {
-
   private subcategories: any;
 
-  constructor(private navCtrl: NavController, 
-      private navParams: NavParams,
-      private addStuffSrvc: AddStuffService,
-      private alertCtrl: AlertController,
-      private loadingCtrl: LoadingController,
-      private platform: Platform) {}
+  constructor(
+    private addStuffSrvc: AddStuffService,
+    private alertCtrl: AlertController,
+    private gfunc: GlobalFunctions,
+    private loadingCtrl: LoadingController
+  ) {}
 
   ionViewDidEnter() {
     let loader = this.loadingCtrl.create({
@@ -23,61 +23,48 @@ export class DeleteCategoryPage {
     });
     loader.present();
 
-    this.addStuffSrvc.loadSubcategory().then( successData => {
-      this.subcategories = successData;
-      this.subcategories = this.subcategories.message;
-      loader.dismiss();
-    }, failureData => {
-      let alert = this.alertCtrl.create({
-        title:'Failed to get subcategories.',
-        buttons: [{
-          text: 'OK',
-          handler: data => {
-            this.navCtrl.pop();
-          }
-        }]
-      });
-      loader.dismiss();
-      alert.present();
-    });
+    this.addStuffSrvc.loadSubcategory().subscribe(
+      response => {
+        this.subcategories = response;
+        loader.dismiss();
+      },
+      err => {
+        this.gfunc.hadleApiError(err);
+      }
+    );
   }
 
   deleteSubcategory(subcategory: string) {
     let alert = this.alertCtrl.create({
-      title:'Are you sure you want to delete category ' + subcategory + "?",
-      message: 'Note: all items under ' + subcategory + ' will be deleted.',
-      buttons: [{
-        text: 'OK',
-        handler: data => {
-          let loader = this.loadingCtrl.create({
-          content: "Loading..."
-          });
-          loader.present();
+      title: `Are you sure you want to delete ${subcategory}?`,
+      message: `Note: all items under ${subcategory} will be deleted.`,
+      buttons: [
+        {
+          text: "OK",
+          handler: data => {
+            let loader = this.loadingCtrl.create({
+              content: "Loading..."
+            });
+            loader.present();
 
-          this.addStuffSrvc.deleteSubcategory(subcategory).then( (successData) => {
-            this.subcategories = [];
-            loader.dismiss();
-            this.ionViewDidEnter();
-          }, (failureData) => {
-            let alert = this.alertCtrl.create({
-            title:'Failed to delete subcategory.',
-            buttons: [{
-              text: 'OK',
-              handler: data => {
-                this.navCtrl.pop();
+            this.addStuffSrvc.deleteSubcategory(subcategory).subscribe(
+              response => {
+                this.subcategories = [];
+                loader.dismiss();
+                this.ionViewDidEnter();
+              },
+              err => {
+                this.gfunc.hadleApiError(err);
               }
-            }]
-          });
-          loader.dismiss();
-          alert.present();
-          });
+            );
+          }
+        },
+        {
+          text: "Cancel",
+          role: "cancel"
         }
-      },
-      {
-        text: 'Cancel',
-        role: 'cancel'
-      }]
-  });
-  alert.present();
+      ]
+    });
+    alert.present();
   }
 }

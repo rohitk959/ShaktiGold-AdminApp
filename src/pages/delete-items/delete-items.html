@@ -29,7 +29,8 @@
       <ion-thumbnail item-left (click)="getItemDetails(item.itemId)">
         <img [src]="item.imgUrl"/>
       </ion-thumbnail>
-      <b (click)="getItemDetails(item.itemId)">Item Code - {{item.itemId}}</b>
+      <b (click)="getItemDetails(item.itemId)">Item Code - {{item.itemId}}</b><br>
+      <b (click)="getItemDetails(item.itemId)">Item Name - {{item.itemName}}</b>
       <ion-icon (click)="deleteItem(item.itemId)" name="trash" item-right></ion-icon>
     </ion-item>
   </ion-list>

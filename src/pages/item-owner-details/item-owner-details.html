@@ -11,16 +11,16 @@
     <ion-card>
       <ion-card-content>
         <div class="sg-text">
-        First Name: {{message.firstName}} <br>
-        Last Name: {{message.lastName}} <br>
-        Email ID: {{message.email}} <br>
-        Address Line 1: {{userDetailsModel.addressLine1}} <br>
-        Address Line 2: {{userDetailsModel.addressLine2}} <br>
-        State: {{userDetailsModel.state}} <br>
-        Country: {{userDetailsModel.country}} <br>
-        Mobile Number: {{userDetailsModel.mobileNumber}} <br>
-        Alt Mobile Number: {{userDetailsModel.altMobileNumber}} <br>
-        Landline Number: {{userDetailsModel.landLineNumber}} <br>
+        First Name: {{userDetails?.firstName}} <br>
+        Last Name: {{userDetails?.lastName}} <br>
+        Email ID: {{userDetails?.email}} <br>
+        Address Line 1: {{userDetails?.userDetailsModel?.addressLine1}} <br>
+        Address Line 2: {{userDetails?.userDetailsModel?.addressLine2}} <br>
+        State: {{userDetails?.userDetailsModel?.state}} <br>
+        Country: {{userDetails?.userDetailsModel?.country}} <br>
+        Mobile Number: {{userDetails?.userDetailsModel?.mobileNumber}} <br>
+        Alt Mobile Number: {{userDetails?.userDetailsModel?.altMobileNumber}} <br>
+        Landline Number: {{userDetails?.userDetailsModel?.landLineNumber}} <br>
         </div>
       </ion-card-content>
     </ion-card>

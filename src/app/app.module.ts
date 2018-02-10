@@ -1,6 +1,10 @@
 import { NgModule, ErrorHandler } from '@angular/core';
+import { BrowserModule } from '@angular/platform-browser';
 import { IonicApp, IonicModule, IonicErrorHandler } from 'ionic-angular';
+import {HttpModule, XHRBackend, RequestOptions, Http} from '@angular/http';
+import { Storage, IonicStorageModule } from '@ionic/storage';
 import { Camera } from '@ionic-native/camera';
+
 import { MyApp } from './app.component';
 import { ContactPage } from '../pages/contact/contact';
 import { TabsPage } from '../pages/tabs/tabs';
@@ -14,12 +18,20 @@ import { HideCategoryPage } from '../pages/hide-category/hide-category';
 import { HideItemsPage } from '../pages/hide-items/hide-items';
 import { DeleteCategoryPage } from '../pages/delete-category/delete-category';
 import { DeleteItemsPage } from '../pages/delete-items/delete-items';
+import { Notifications } from '../pages/notifications/notifications';
 
+import { HttpInterceptor } from '../providers/auth-interceptor';
 import { OrdersService } from '../providers/orders-service';
 import { AddStuffService } from '../providers/add-stuff-service';
+import { NotificationsService } from '../providers/notifications-service';
+import { GlobalFunctions } from '../providers/global-functions';
 
 import { StatusBar } from '@ionic-native/status-bar';
 import { SplashScreen } from '@ionic-native/splash-screen';
+
+export function httpInterceptorFactory(xhrBackend: XHRBackend, requestOptions: RequestOptions, storage: Storage) {
+  return new HttpInterceptor(xhrBackend, requestOptions, storage);
+}
 
 @NgModule({
   declarations: [
@@ -35,10 +47,17 @@ import { SplashScreen } from '@ionic-native/splash-screen';
     HideCategoryPage,
     HideItemsPage,
     DeleteCategoryPage,
-    DeleteItemsPage
+    DeleteItemsPage,
+    Notifications
   ],
   imports: [
-    IonicModule.forRoot(MyApp)
+    BrowserModule,
+    HttpModule,
+    IonicModule.forRoot(MyApp),
+    IonicStorageModule.forRoot({
+      name: '__shaktiGold',
+         driverOrder: ['sqlite', 'websql', 'indexeddb']
+    })
   ],
   bootstrap: [IonicApp],
   entryComponents: [
@@ -54,7 +73,8 @@ import { SplashScreen } from '@ionic-native/splash-screen';
     HideCategoryPage,
     HideItemsPage,
     DeleteCategoryPage,
-    DeleteItemsPage
+    DeleteItemsPage,
+    Notifications
   ],
   providers: [
     StatusBar,
@@ -62,7 +82,14 @@ import { SplashScreen } from '@ionic-native/splash-screen';
     {provide: ErrorHandler, useClass: IonicErrorHandler},
     OrdersService,
     AddStuffService,
-    Camera
+    NotificationsService,
+    GlobalFunctions,
+    Camera,
+    {
+      provide: Http,
+      useFactory: httpInterceptorFactory,
+      deps: [XHRBackend, RequestOptions, Storage]
+    }
   ]
 })
 export class AppModule {}
